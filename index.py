@@ -57,7 +57,7 @@ driver.execute_script("arguments[0].click();", button_element)
 # button_wait = WebDriverWait(driver, 20)
 # button_element = button_wait.until(EC.element_to_be_clickable((By.ID, 'acc-toggle-1')))
 # button_element.click()
-time.sleep(5)
+time.sleep(3)
 
 # input option click
 input1_element = driver.find_element(By.ID, 'edit-type-directory-RNCP')
@@ -90,15 +90,15 @@ for select_id in range(len(select_options)):
     soup = BeautifulSoup(content, 'html.parser')
     result_number = soup.select('.label-page')
     item_number = re.findall(r'\d+', result_number[0].text.strip())
-    items = int(int(item_number[0])/25)
+    li = int(int(item_number[0])/25)
     time.sleep(3)
 
     # show more button click
-    if items == 0:
+    if li == 0:
         time.sleep(1)
     else:
         show_element = driver.find_element(By.ID, 'load-more')
-        for item in range(items):
+        for item in range(li):
             driver.execute_script("arguments[0].click();", show_element)
             # wait = WebDriverWait(driver, 20)
             # element = wait.until(EC.element_to_be_clickable((By.ID, 'load-more')))
@@ -109,112 +109,106 @@ for select_id in range(len(select_options)):
     all_result_content = driver.page_source
     urls = BeautifulSoup(all_result_content, 'html.parser')
     lists = urls.select('ul > li > div > span > a')
-    scrape_one = []
+    i = 0
     for li in lists:
+        i += 1
         href = li['href']
         other_driver = webdriver.Chrome()
         other_driver.get(href)
-        time.sleep(5)
+        time.sleep(3)
         other_content = BeautifulSoup(other_driver.page_source, 'html.parser')
         
         # RNCP and intitule
         title = other_content.select('.bl__title')
         real_title = title[0].text.strip()
         split_title = real_title.split(" - ")
-        RNCP = split_title[0]
-        intitule = split_title[1]
-        print('RNCP:', RNCP, 'intitule:', intitule)
-
+        RNCP = split_title[0].encode("utf-8").decode("utf-8")
+        intitule = split_title[1].encode("utf-8").decode("utf-8")
+        
         # Niveau
         niveau_data = other_content.select('.nomenclature_niveau > span')
-        niveau = niveau_data[0].text.strip()
-        print('Niveau:', niveau)
+        niveau = niveau_data[0].text.strip().encode("utf-8").decode("utf-8")
         
         # Certificateur
         certi_data = other_content.select('#collapseOne > div > div > table > tbody > tr > td')
-        certi = certi_data[0].text.strip()
-        print('Certi:', certi)
+        certi = certi_data[0].text.strip().encode("utf-8").decode("utf-8")
 
         # Date
         date_data = other_content.select('.code > div > span')
-        dates = date_data[1].text.strip()
-        print('Date:', dates)
+        dates = date_data[1].text.strip().encode("utf-8").decode("utf-8")
 
         # Fiche
         fiche = other_content.select('.content-liste > div > span')
-        real_fiche = fiche[0].text.strip()
-        print('fiche:', real_fiche)
+        real_fiche = fiche[0].text.strip().encode("utf-8").decode("utf-8")
         
         # RESUME
-        resume_title = other_content.select('#collapseTwo > div > h5')
-        resume_content = other_content.select('#collapseTwo > div > div')
-        resume = []
-        for id in range(len(resume_title)):
-            if len(resume_content) > id >=0:
-                resume_value = {
-                    "title": resume_title[id].text.strip(),
-                    'content': resume_content[id].text.strip()
-                }
-            else:
-                resume_value = {
-                    "title": resume_title[id].text.strip(),
-                    'content': ""
-                }
+        # resume_title = other_content.select('#collapseTwo > div > h5')
+        # resume_content = other_content.select('#collapseTwo > div > div')
+        # resume = []
+        # for id in range(len(resume_title)):
+        #     if len(resume_content) > id >=0:
+        #         resume_value = {
+        #             "title": resume_title[id].text.strip().encode("utf-8").decode("utf-8"),
+        #             'content': resume_content[id].text.strip().encode("utf-8").decode("utf-8")
+        #         }
+        #     else:
+        #         resume_value = {
+        #             "title": resume_title[id].text.strip().encode("utf-8").decode("utf-8"),
+        #             'content': ""
+        #         }
             
-            resume.append(resume_value)
-        # print('Resume:', resume)
+        #     resume.append(resume_value)
+        resume_data = other_content.select('#collapseTwo > div')
+        resume = str(resume_data[0])
 
         # SECTEUR
-        secteur_title = other_content.select('#collapseFour > div > h5')
-        secteur_content = other_content.select('#collapseFour > div > div')
-        secteur = []
-        for id in range(len(secteur_title)):
-            if len(secteur_content) > id >=0:
-                secteur_value = {
-                    "title": secteur_title[id].text.strip(),
-                    'content': secteur_content[id].text.strip()
-                }
-            else:
-                secteur_value = {
-                    "title": secteur_title[id].text.strip(),
-                    'content': ""
-                }
+        # secteur_title = other_content.select('#collapseFour > div > h5')
+        # secteur_content = other_content.select('#collapseFour > div > div')
+        # secteur = []
+        # for id in range(len(secteur_title)):
+        #     if len(secteur_content) > id >=0:
+        #         secteur_value = {
+        #             "title": secteur_title[id].text.strip().encode("utf-8").decode("utf-8"),
+        #             'content': secteur_content[id].text.strip().encode("utf-8").decode("utf-8")
+        #         }
+        #     else:
+        #         secteur_value = {
+        #             "title": secteur_title[id].text.strip().encode("utf-8").decode("utf-8"),
+        #             'content': ""
+        #         }
             
-            secteur.append(secteur_value)
-        # print('Secteur', secteur)
+        #     secteur.append(secteur_value)
+        secteur_data = other_content.select('#collapseFour > div')
+        secteur = str(secteur_data[0])
 
         # VOIES
         voies_data = other_content.select('#collapseFive > div')
-        voies = voies_data[0].text.strip()
-        print(voies)
+        voies = str(voies_data[0])
 
         # LIEN
         lien_data = other_content.select('#collapseSix > div')
-        lien = lien_data[0].text.strip()
-        print(lien)
+        lien = str(lien_data[0])
 
         # BASE
         base_data = other_content.select('#collapseSeven > div')
-        base = base_data[0].text.strip()
-        print(base)
+        base = str(base_data[0])
 
         # POUR
         pour_data = other_content.select('#collapseEight > div')
-        pour = pour_data[0].text.strip()
-        print(pour)
+        pour = str(pour_data[0])
 
         # quit other driver
         other_driver.quit()
 
         # collect data
         total_data =  {
-            "id" : items + 1,
+            "id" : i,
             "RNCP" : RNCP,
             "Intitule" : intitule,
             "Niveau" : niveau,
             "Certificateur" : certi,
             "Date" : dates,
-            "fiche" : fiche,
+            "fiche" : real_fiche,
             "RESUME" : resume,
             "SECTEUR" : secteur,
             "VOIES" : voies,
@@ -222,16 +216,17 @@ for select_id in range(len(select_options)):
             "BASE" : base,
             "POUR" : pour,
         }
-        scrape_one.append(total_data)
-    
-    # insert collect data to json
-    scrape_data[select_options[select_id]] = scrape_one
-    time.sleep(5)
+        print(total_data, '>>>>>>>>>>><<<<<<<<<<<')
+        # read and append data to json
+        data = []
+        file_path = "data.json"
+        with open(file_path, "r") as file:
+            data = json.load(file)
+        data.append(total_data)
 
-# write json data to data.json file
-file_path = "data.json"
-with open(file_path, "w") as json_file:
-    json.dump(scrape_data, json_file)
+        # write json data to data.json file
+        with open('data.json', 'w') as file:
+            json.dump(data, file)
 
 time.sleep(5)
 driver.quit()
