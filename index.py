@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 import re
 import json
 
+
 select_options = [
     'BAC+PRO',
     'BEATEP',
