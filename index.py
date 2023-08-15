@@ -90,29 +90,29 @@ for select_id in range(len(select_options)):
     soup = BeautifulSoup(content, 'html.parser')
     result_number = soup.select('.label-page')
     item_number = re.findall(r'\d+', result_number[0].text.strip())
-    li = int(int(item_number[0])/25)
-    time.sleep(3)
+    if len(item_number) > 0:
+        li = int(int(item_number[0])/25)
+        time.sleep(3)
 
-    # show more button click
-    if li == 0:
-        time.sleep(1)
-    else:
-        show_element = driver.find_element(By.ID, 'load-more')
-        for item in range(li):
-            driver.execute_script("arguments[0].click();", show_element)
-            # wait = WebDriverWait(driver, 20)
-            # element = wait.until(EC.element_to_be_clickable((By.ID, 'load-more')))
-            # element.click()
+        # show more button click
+        if li == 0:
             time.sleep(1)
+        else:
+            show_element = driver.find_element(By.ID, 'load-more')
+            for item in range(li):
+                driver.execute_script("arguments[0].click();", show_element)
+                # wait = WebDriverWait(driver, 20)
+                # element = wait.until(EC.element_to_be_clickable((By.ID, 'load-more')))
+                # element.click()
+                time.sleep(1)
 
-    # collect URLs for the result
-    all_result_content = driver.page_source
-    urls = BeautifulSoup(all_result_content, 'html.parser')
-    lists = urls.select('ul > li > div > span > a')
-    i = 0
-    for li in lists:
-        i += 1
-        if i > 138:
+        # collect URLs for the result
+        all_result_content = driver.page_source
+        urls = BeautifulSoup(all_result_content, 'html.parser')
+        lists = urls.select('ul > li > div > span > a')
+        i = 0
+        for li in lists:
+            i += 1
             href = li['href']
             other_driver = webdriver.Chrome()
             other_driver.get(href)
@@ -143,42 +143,10 @@ for select_id in range(len(select_options)):
             real_fiche = fiche[0].text.strip().encode("utf-8").decode("utf-8")
             
             # RESUME
-            # resume_title = other_content.select('#collapseTwo > div > h5')
-            # resume_content = other_content.select('#collapseTwo > div > div')
-            # resume = []
-            # for id in range(len(resume_title)):
-            #     if len(resume_content) > id >=0:
-            #         resume_value = {
-            #             "title": resume_title[id].text.strip().encode("utf-8").decode("utf-8"),
-            #             'content': resume_content[id].text.strip().encode("utf-8").decode("utf-8")
-            #         }
-            #     else:
-            #         resume_value = {
-            #             "title": resume_title[id].text.strip().encode("utf-8").decode("utf-8"),
-            #             'content': ""
-            #         }
-                
-            #     resume.append(resume_value)
             resume_data = other_content.select('#collapseTwo > div')
             resume = str(resume_data[0])
 
             # SECTEUR
-            # secteur_title = other_content.select('#collapseFour > div > h5')
-            # secteur_content = other_content.select('#collapseFour > div > div')
-            # secteur = []
-            # for id in range(len(secteur_title)):
-            #     if len(secteur_content) > id >=0:
-            #         secteur_value = {
-            #             "title": secteur_title[id].text.strip().encode("utf-8").decode("utf-8"),
-            #             'content': secteur_content[id].text.strip().encode("utf-8").decode("utf-8")
-            #         }
-            #     else:
-            #         secteur_value = {
-            #             "title": secteur_title[id].text.strip().encode("utf-8").decode("utf-8"),
-            #             'content': ""
-            #         }
-                
-            #     secteur.append(secteur_value)
             secteur_data = other_content.select('#collapseFour > div')
             secteur = str(secteur_data[0])
 
@@ -228,6 +196,6 @@ for select_id in range(len(select_options)):
             with open('data.json', 'w') as file:
                 json.dump(data, file)
 
-    time.sleep(3)
+        time.sleep(3)
 time.sleep(5)
 driver.quit()
